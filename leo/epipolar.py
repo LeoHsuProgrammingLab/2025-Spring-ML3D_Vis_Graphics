@@ -51,7 +51,7 @@ def draw_epipolar_from_poses(img1, img2, K, R1, t1, R2, t2, pts1_2d):
     # Step 4: Draw lines on img2
     img2_with_lines = draw_epipolar_lines(img2, lines2)
 
-    return img2_with_lines, lines2
+    return img2_with_lines, lines2, F
 
 def draw_dotted_error_lines(img, keypoints, lines, color=(0, 255, 255), step=5):
     """
@@ -148,11 +148,11 @@ def epi_with_pose():
     pts2_2d = data['kpts2']
     pts2_2d = np.array(pts2_2d)
 
-    img2_lines, lines2 = draw_epipolar_from_poses(img1, img2, K, R1, t1, R2, t2, pts1_2d)
+    img2_lines, lines2, F = draw_epipolar_from_poses(img1, img2, K, R1, t1, R2, t2, pts1_2d)
     cv2.imwrite('/home/agenuinedream/repo/2025-Spring-ML3D_Vis_Graphics/leo/matches/test_1_0/epi_010.png', img2_lines)
 
     # Compute Fundamental Matrix
-    F, mask = cv2.findFundamentalMat(
+    F_, mask = cv2.findFundamentalMat(
         pts1_2d, pts2_2d, method=cv2.USAC_MAGSAC, ransacReprojThreshold=0.2, confidence=0.999999, maxIters=10000
     )
     loss = compute_epipolar_loss(F, pts1_2d, pts2_2d)
